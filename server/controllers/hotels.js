@@ -1,5 +1,4 @@
 import Hotels from "../models/Hotels.js";
-
 export const getHotel = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -38,21 +37,19 @@ export const deleteHotel = async (req, res, next) => {
 };
 
 export const updateHotel = async (req, res, next) => {
-  const { id } = req.params;
   try {
-    const updated = await Hotels.findByIdAndUpdate(
-      id,
-      {
-        $set: req.body,
-      },
+    const updatedHotel = await Hotels.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
       { new: true }
     );
-    if (!updated) {
-      return res.status(404).json({ err: "Hotel not found" });
-    }
-    res.status(200).json(updated);
-  } catch (error) {
-    next(error);
+
+    if (!updatedHotel) return res.status(404).json("not found");
+
+    res.status(200).json(updatedHotel);
+  } catch (err) {
+    console.log(err);
+    next(err);
   }
 };
 
