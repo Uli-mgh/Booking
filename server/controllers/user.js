@@ -23,6 +23,21 @@ export const deleteUser = async (req, res, next) => {
   }
 };
 
-export const getAllUsers = async (req, res, next) => {};
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find();
 
-export const getUser = async (req, res, next) => {};
+    res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
+};
