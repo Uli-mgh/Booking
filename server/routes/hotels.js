@@ -33,6 +33,8 @@ router.get("/", getAllHotels);
 router.get("/hotel/:id", getHotel);
 
 // GET by city & Type
+
+// this endpoints expects a query for city or type of room, hotel
 router.get("/city", getByCity);
 router.get("/type", countByType);
 
