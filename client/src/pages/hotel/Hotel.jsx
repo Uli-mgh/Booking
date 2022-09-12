@@ -4,17 +4,26 @@ import Footer from "../../components/footer/Footer";
 import MailList from "../../components/mailList/MailList";
 import "./hotel.css";
 import { FaLocationArrow } from "react-icons/fa";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
 import {
   BsFillArrowLeftCircleFill,
   BsFillArrowRightCircleFill,
 } from "react-icons/bs";
+import useFetch from "../../hooks/useFetch";
+import { useLocation } from "react-router-dom";
+import { SearchContext } from "../../context/SearchContext";
 
 const Hotel = () => {
   const [slideNumber, setSlideNumber] = useState(0);
   const [open, setOpen] = useState(false);
+  const location = useLocation();
+  const id = location.pathname.split("/")[2];
+  // console.log(id);
 
+  const { data, loading, error } = useFetch(`/hotels/hotel/${id}`);
+  const { dates } = useContext(SearchContext);
+  console.log(dates);
   const images = [
     {
       src: "https://cf.bstatic.com/xdata/images/hotel/max1280x900/261707778.jpg?k=56ba0babbcbbfeb3d3e911728831dcbc390ed2cb16c51d88159f82bf751d04c6&o=&hp=1",
@@ -57,81 +66,78 @@ const Hotel = () => {
     <div>
       <Navbar />
       <Header type="list" />
-      <div className="hotelContainer">
-        {open && (
-          <div className="slider">
-            <AiFillCloseCircle
-              className="close"
-              onClick={() => setOpen(false)}
-            />
-            <BsFillArrowLeftCircleFill
-              className="arrow"
-              onClick={() => handleMove("l")}
-            />
-            <div className="sliderWrapper">
-              <img src={images[slideNumber].src} alt="" className="sliderImg" />
-            </div>
-            <BsFillArrowRightCircleFill
-              className="arrow"
-              onClick={() => handleMove("r")}
-            />
-          </div>
-        )}
-        <div className="hotelWrapper">
-          <button className="bookNow">Reserve or Book now!</button>
-          <h1 className="hotelTitle">Gran Hotel</h1>
-          <div className="hotelAddress">
-            <FaLocationArrow />
-            <span>Elton St 125 New York</span>
-          </div>
-          <span className="hotelDistance">
-            Excelente ubicacion - a 500 metros del centro
-          </span>
-          <div className="hotelImages">
-            {images.map((image, index) => (
-              <div className="hotelImgWrapper" key={index}>
+      {loading ? (
+        "Loading..."
+      ) : (
+        <div className="hotelContainer">
+          {open && (
+            <div className="slider">
+              <AiFillCloseCircle
+                className="close"
+                onClick={() => setOpen(false)}
+              />
+              <BsFillArrowLeftCircleFill
+                className="arrow"
+                onClick={() => handleMove("l")}
+              />
+              <div className="sliderWrapper">
                 <img
-                  src={image.src}
-                  alt="Hotel"
-                  onClick={() => handleOpen(index)}
-                  className="hotelImg"
+                  src={images[slideNumber].src}
+                  alt=""
+                  className="sliderImg"
                 />
               </div>
-            ))}
-          </div>
-          <div className="hotelDetails">
-            <div className="hotelDetailsTexts">
-              <h1 className="hotelTitle">En el corazon de la ciudad</h1>
-              <p className="hotelDesc">
-                Located a 5-minute walk from St. Florian's Gate in Krakow, Tower
-                Street Apartments has accommodations with air conditioning and
-                free WiFi. The units come with hardwood floors and feature a
-                fully equipped kitchenette with a microwave, a flat-screen TV,
-                and a private bathroom with shower and a hairdryer. A fridge is
-                also offered, as well as an electric tea pot and a coffee
-                machine. Popular points of interest near the apartment include
-                Cloth Hall, Main Market Square and Town Hall Tower. The nearest
-                airport is John Paul II International Kraków–Balice, 16.1 km
-                from Tower Street Apartments, and the property offers a paid
-                airport shuttle service.
-              </p>
+              <BsFillArrowRightCircleFill
+                className="arrow"
+                onClick={() => handleMove("r")}
+              />
             </div>
-            <div className="hotelDetailsPrice">
-              <h1>Perfect for a 9-night stay!</h1>
-              <span>
-                Located in the real heart of krakow, this property has an
-                excelent location score of 9.8!
-              </span>
-              <h2>
-                <b>$950</b> (9 nights)
-              </h2>
-              <button>Reserve or Book now!</button>
+          )}
+          <div className="hotelWrapper">
+            <button className="bookNow">Reserve now!</button>
+            <h1 className="hotelTitle">{data?.name}</h1>
+            <div className="hotelAddress">
+              <FaLocationArrow />
+              <span>{data?.address}</span>
+            </div>
+            <span className="hotelDistance">
+              Excelente ubicacion - a {data?.distance} metros del centro
+            </span>
+            <div className="hotelImages">
+              {/* NOTA MENTAL PARA ULISES DEL FUTURO, AGREGA EL ARRAY DE IMAGENES A LA DB */}
+              {images.map((image, index) => (
+                <div className="hotelImgWrapper" key={index}>
+                  <img
+                    src={image.src}
+                    alt="Hotel"
+                    onClick={() => handleOpen(index)}
+                    className="hotelImg"
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="hotelDetails">
+              <div className="hotelDetailsTexts">
+                <h1 className="hotelTitle">En el corazon de la ciudad</h1>
+                <p className="hotelDesc">{data?.description}</p>
+              </div>
+              <div className="hotelDetailsPrice">
+                <h1>Perfecta para una estancia de 9 noches!</h1>
+                <span>
+                  Located in the real heart of {data?.city}, this property has
+                  an excelent location score of {data?.rating}!
+                </span>
+                <h2>
+                  <b>${data.cheapest * 9}</b> (9 nights)
+                </h2>
+                <button>Reserva ahora!</button>
+              </div>
             </div>
           </div>
+          <MailList />
+          <Footer />
         </div>
-        <MailList />
-        <Footer />
-      </div>
+      )}
     </div>
   );
 };

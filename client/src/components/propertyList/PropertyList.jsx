@@ -14,7 +14,7 @@ const images = [
 
 const PropertyList = () => {
   const { data, loading, error } = useFetch("/hotels/type");
-  console.log(data);
+  // console.log(data);
   return (
     <div className="pList">
       {loading ? (

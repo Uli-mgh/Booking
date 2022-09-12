@@ -27,7 +27,7 @@ const SearchReducer = (state, action) => {
 
 export const SearchContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(SearchReducer, initialState);
-
+  console.log(state.dates);
   return (
     <SearchContext.Provider
       value={{
