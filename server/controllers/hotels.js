@@ -1,5 +1,6 @@
 import Hotels from "../models/Hotels.js";
-import Rooms from "../models/Rooom.js";
+import Rooms from "../models/Rooms.js";
+
 export const getHotel = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -14,8 +15,13 @@ export const getHotel = async (req, res, next) => {
 };
 
 export const getAllHotels = async (req, res, next) => {
+  const { min, max, ...other } = req.query;
+
   try {
-    const hotels = await Hotels.find();
+    const hotels = await Hotels.find({
+      ...other,
+      cheapest: { $gt: min | 1, $lt: max || 999 },
+    }).limit(req.query.limit);
 
     res.status(200).json(hotels);
   } catch (error) {
@@ -40,15 +46,15 @@ export const getByCity = async (req, res, next) => {
 
 export const countByType = async (req, res, next) => {
   try {
-    const hotelCount = await Hotel.countDocuments({ type: "hotel" });
+    const hotelCount = await Hotels.countDocuments({ type: "hotel" });
 
-    const apartmentCount = await Hotel.countDocuments({ type: "apartment" });
+    const apartmentCount = await Hotels.countDocuments({ type: "apartment" });
 
-    const resortCount = await Hotel.countDocuments({ type: "resort" });
+    const resortCount = await Hotels.countDocuments({ type: "resort" });
+    Hotels;
+    const villaCount = await Hotels.countDocuments({ type: "villa" });
 
-    const villaCount = await Hotel.countDocuments({ type: "villa" });
-
-    const cabinCount = await Hotel.countDocuments({ type: "cabin" });
+    const cabinCount = await Hotels.countDocuments({ type: "cabin" });
 
     res.status(200).json([
       { type: "hotel", count: hotelCount },

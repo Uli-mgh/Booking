@@ -6,8 +6,8 @@ import {
   getRooms,
   roomAvailable,
   updateRoom,
-} from "../controllers/room";
-import { verifyAdmin } from "../utils/verify";
+} from "../controllers/room.js";
+import { verifyAdmin } from "../utils/verify.js";
 
 const router = express.Router();
 
